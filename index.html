@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3Dee Pro - Business Edition</title>
+    <title>3Dee Pro - Cloud & Business</title>
     <style>
         :root {
             --bg: #0a0a0a; --card: #161616; --text: #ffffff;
@@ -48,7 +48,9 @@
 
         .cloud-zone { display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; }
         .btn-cloud { flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; font-size: 0.8em; }
-        
+        .btn-backup { background: #0044cc; color: white; }
+        .btn-restore { background: #333; color: white; border: 1px solid #555; }
+
         .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         @media (min-width: 900px) { .summary-grid { grid-template-columns: repeat(4, 1fr); } }
         
@@ -57,6 +59,8 @@
         .stat-value { font-size: 1.1em; font-weight: 900; }
         .card-spent { color: var(--danger); border-bottom: 2px solid var(--danger); }
         .card-profit { border: 2px solid var(--success); color: var(--success); background: #001a0d; }
+
+        .search-input { width: 100%; background: #111; border: 2px solid var(--primary); color: white; padding: 12px; border-radius: 10px; font-weight: bold; box-sizing: border-box; margin-bottom: 15px; }
 
         .job-card { background: #1a1a1a; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #333; display: flex; align-items: center; gap: 15px; justify-content: space-between; flex-wrap: wrap; transition: all 0.3s ease; }
         .job-card.is-editing { border: 2px solid var(--accent) !important; background: #252000; }
@@ -81,7 +85,6 @@
         .actions { display: flex; gap: 5px; }
         .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; }
         .action-btn.active-status { background: var(--success); color: #000; border-color: var(--success); }
-        .action-btn.cp-status { background: #444; color: #fff; }
     </style>
 </head>
 <body>
@@ -136,6 +139,11 @@
             <button class="btn-add" id="btn_save" onclick="saveItem()">ULOŽIŤ DO HISTÓRIE</button>
             <button id="btn_cancel" onclick="clearForm()" style="display:none; background:#333; border:1px solid #444; color:#fff; padding:10px; border-radius:10px; width:100%; margin-top:10px; cursor:pointer; font-weight:bold;">✖ ZRUŠIŤ ÚPRAVU</button>
             <button class="btn-buy" id="btn_other" onclick="addOtherItem()">✚ NÁKUP / INÉ VÝDAVKY</button>
+
+            <div class="cloud-zone">
+                <button class="btn-cloud btn-backup" id="btn_backup" onclick="handleCloud('backup')">☁️ ZÁLOHOVAŤ</button>
+                <button class="btn-cloud btn-restore" id="btn_restore" onclick="handleCloud('restore')">⬇️ OBNOVIŤ</button>
+            </div>
         </div>
     </div>
 
@@ -157,6 +165,8 @@
 </div>
 
 <script>
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbx-NoHXuzfx7EVN1ZeY2W4nUmj6RS1JKZylLEabzdFueGmgpAiBPWgOZiNxfHxRjaHN/exec";
+    const MOJE_HESLO = "9988"; 
     let items = [];
     let editingId = null;
     let currentStatus = 'ok';
@@ -173,6 +183,26 @@
         document.getElementById('live-date').innerText = now.toLocaleDateString('sk-SK', {weekday:'long', day:'2-digit', month:'long'});
     }
     setInterval(updateClock, 1000); updateClock();
+
+    async function handleCloud(action) {
+        if(prompt("Heslo:") !== MOJE_HESLO) return alert("Chyba!");
+        const btn = document.getElementById(action === 'backup' ? 'btn_backup' : 'btn_restore');
+        const origText = btn.innerText;
+        btn.innerText = "⏳...";
+        try {
+            if(action === 'backup') {
+                await fetch(CLOUD_URL, {method:'POST', mode:'no-cors', body: JSON.stringify(items)});
+                alert("Zálohované!");
+            } else {
+                const res = await fetch(CLOUD_URL);
+                const data = await res.json();
+                items = Array.isArray(data) ? data : [];
+                refreshUI();
+                alert("Dáta obnovené!");
+            }
+        } catch(e) { alert("Chyba spojenia!"); }
+        btn.innerText = origText;
+    }
 
     function updatePreview(auto = true) {
         const w = parseFloat(document.getElementById('in_w').value) || 0;
@@ -206,7 +236,7 @@
         const newItem = {
             id: editingId || Date.now(),
             type: 'print',
-            status: currentStatus, // 'cp' alebo 'ok'
+            status: currentStatus,
             name: name,
             sell: Number(c.totalSell),
             cost: Number(c.cost),
@@ -311,7 +341,6 @@
             const cost = Number(i.cost) || 0;
             const profit = sell - cost;
 
-            // Do štatistík rátame len OK (Výrobu)
             if(!isCP) {
                 tObrat += sell;
                 tProfit += (i.type === 'buy' ? Number(i.profit) : profit);
@@ -343,7 +372,7 @@
                     </div>
                     <div class="job-profit" style="color:${profit>=0?'var(--success)':'var(--danger)'}">${profit.toFixed(2)}€</div>
                     <div class="actions">
-                        <button class="action-btn ${isCP?'':'active-status'}" title="Prepnúť CP/OK" onclick="toggleItemStatus(${i.id})">${isCP?'OFF':'ON'}</button>
+                        <button class="action-btn ${isCP?'':'active-status'}" title="Prepnúť CP/OK" onclick="toggleItemStatus(${i.id})">${isCP?'CP':'OK'}</button>
                         <button class="action-btn" title="Kópia" onclick="duplicateItem(${i.id})">❐</button>
                         ${i.type==='print'?`<button class="action-btn" title="Upraviť" onclick="editItem(${i.id})">✎</button>`:''}
                         <button class="action-btn" title="Zmazať" onclick="deleteItem(${i.id})">🗑</button>
