@@ -42,7 +42,7 @@
         .input-inline { background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 4px 8px; border-radius: 4px; width: 85px; text-align: right; font-weight: bold; }
 
         .btn-add { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 5px; }
-        .btn-edit-mode { background: var(--accent); color: #000; }
+        .btn-edit-mode { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); }
         .btn-buy { background: transparent; color: var(--success); border: 1px solid var(--success); padding: 8px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; font-weight: bold; }
 
         .cloud-zone { display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; }
@@ -74,7 +74,11 @@
         .tag-cp { background: #444; color: #fff; }
         .tag-ok { background: var(--success); color: #000; }
 
-        /* UPRAVENÉ DÁTA PRE LEPŠIU PREHĽADNOSŤ */
+        /* MULTI-LINE DATA STYLE */
+        .job-meta { margin-top: 5px; line-height: 1.4; }
+        .meta-line-1 { font-size: 0.85em; font-weight: bold; color: #eee; }
+        .meta-line-2 { font-size: 0.75em; color: #777; }
+
         .job-data { display: flex; gap: 20px; text-align: right; flex-grow: 2; justify-content: flex-end; }
         .data-item { display: flex; flex-direction: column; min-width: 100px; }
         .data-label { font-size: 0.65em; color: #666; text-transform: uppercase; font-weight: bold; }
@@ -84,8 +88,16 @@
         .job-profit { min-width: 80px; text-align: right; font-weight: 900; font-size: 1.3em; border-left: 1px solid #333; padding-left: 15px; }
         
         .actions { display: flex; gap: 5px; }
-        .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; }
+        .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; font-weight: bold; }
         .action-btn.active-status { background: var(--success); color: #000; border-color: var(--success); }
+        
+        /* ŽLTÉ SVIETIACE TLAČIDLO EDITU */
+        .action-btn.btn-edit-glow { 
+            background: var(--accent); 
+            color: #000; 
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -370,9 +382,12 @@
                 }
             }
 
-            const details = i.type === 'print' ? `${(Number(i.totalW)||0).toFixed(0)}g | ${Math.floor((Number(i.mins)||0)/60)}h ${(Number(i.mins)||0)%60}m` : "Extra";
+            const weightVal = (Number(i.totalW)||0).toFixed(0);
+            const hoursVal = Math.floor((Number(i.mins)||0)/60);
+            const minsVal = (Number(i.mins)||0)%60;
             
-            // POMOCNÉ VÝPOČTY PRE ŠTÍTOK
+            const detailsLine = i.type === 'print' ? `${weightVal}g | ${hoursVal}h ${minsVal}m •` : "Extra •";
+            
             const costPer = (cost / count).toFixed(2);
             const sellPer = (sell / count).toFixed(2);
 
@@ -380,7 +395,10 @@
                 <div class="job-card type-${i.type} ${editingId === i.id ? 'is-editing' : ''} ${isCP ? 'is-cp' : ''}">
                     <div class="job-info">
                         <span class="job-name">${i.name} <span class="job-tag ${isCP?'tag-cp':'tag-ok'}">${isCP?'CP':'OK'}</span></span>
-                        <span class="job-date" style="font-size:0.75em; color:#666;">${details} • ${i.date}</span>
+                        <div class="job-meta">
+                            <div class="meta-line-1">${detailsLine}</div>
+                            <div class="meta-line-2">${i.date}</div>
+                        </div>
                     </div>
                     
                     <div class="job-data">
@@ -404,7 +422,7 @@
                     <div class="actions">
                         <button class="action-btn ${isCP?'':'active-status'}" title="Prepnúť" onclick="toggleItemStatus(${i.id})">${isCP?'CP':'OK'}</button>
                         <button class="action-btn" onclick="duplicateItem(${i.id})">❐</button>
-                        ${i.type==='print'?`<button class="action-btn" onclick="editItem(${i.id})">✎</button>`:''}
+                        ${i.type==='print'?`<button class="action-btn btn-edit-glow" onclick="editItem(${i.id})">✎</button>`:''}
                         <button class="action-btn" onclick="deleteItem(${i.id})">🗑</button>
                     </div>
                 </div>`;
