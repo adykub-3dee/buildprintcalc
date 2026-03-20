@@ -42,7 +42,7 @@
         .input-inline { background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 4px 8px; border-radius: 4px; width: 85px; text-align: right; font-weight: bold; }
 
         .btn-add { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 5px; }
-        .btn-edit-mode { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); }
+        .btn-edit-mode { background: var(--accent); color: #000; }
         .btn-buy { background: transparent; color: var(--success); border: 1px solid var(--success); padding: 8px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; font-weight: bold; }
 
         .cloud-zone { display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; }
@@ -61,42 +61,46 @@
 
         .search-input { width: 100%; background: #111; border: 2px solid var(--primary); color: white; padding: 12px; border-radius: 10px; font-weight: bold; box-sizing: border-box; margin-bottom: 15px; }
 
+        /* JOB CARD & LAYOUT */
         .job-card { background: #1a1a1a; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #333; display: flex; align-items: center; gap: 15px; justify-content: space-between; flex-wrap: wrap; transition: all 0.3s ease; }
-        .job-card.is-editing { border: 2px solid var(--accent) !important; background: #252000; }
+        .job-card.is-editing { border: 2px solid var(--accent) !important; background: #252000; box-shadow: 0 0 15px rgba(255, 204, 0, 0.2); }
         .job-card.is-cp { border: 1px dashed var(--cp-color); opacity: 0.7; background: #111; }
         .type-buy { border-left: 5px solid var(--danger); }
         .type-print { border-left: 5px solid var(--primary); }
         .is-cp.type-print { border-left: 5px solid var(--cp-color); }
 
-        .job-info { flex: 1; min-width: 140px; }
-        .job-name { font-weight: bold; display: block; font-size: 1.1em; }
+        .job-info { flex: 2; min-width: 180px; } /* Rozšírené pre názov */
+        .job-name { font-weight: bold; display: block; font-size: 1.1em; margin-bottom: 4px; }
         .job-tag { font-size: 0.6em; padding: 2px 5px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
         .tag-cp { background: #444; color: #fff; }
         .tag-ok { background: var(--success); color: #000; }
 
-        /* MULTI-LINE DATA STYLE */
-        .job-meta { margin-top: 5px; line-height: 1.4; }
-        .meta-line-1 { font-size: 0.85em; font-weight: bold; color: #eee; }
-        .meta-line-2 { font-size: 0.75em; color: #777; }
-
-        .job-data { display: flex; gap: 20px; text-align: right; flex-grow: 2; justify-content: flex-end; }
-        .data-item { display: flex; flex-direction: column; min-width: 100px; }
+        .job-data { display: flex; gap: 15px; text-align: right; flex-grow: 1; justify-content: flex-end; }
+        .data-item { display: flex; flex-direction: column; min-width: 85px; }
         .data-label { font-size: 0.65em; color: #666; text-transform: uppercase; font-weight: bold; }
         .data-val { font-size: 1.05em; font-weight: bold; white-space: nowrap; }
         .data-sub { font-size: 0.65em; color: #888; margin-top: 2px; }
 
         .job-profit { min-width: 80px; text-align: right; font-weight: 900; font-size: 1.3em; border-left: 1px solid #333; padding-left: 15px; }
+        .profit-label { font-size: 0.45em; display: block; color: #666; text-transform: uppercase; margin-bottom: 4px; } /* Viac miesta pod ziskom */
         
         .actions { display: flex; gap: 5px; }
-        .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; font-weight: bold; }
+        .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; transition: 0.3s; }
         .action-btn.active-status { background: var(--success); color: #000; border-color: var(--success); }
         
-        /* ŽLTÉ SVIETIACE TLAČIDLO EDITU */
-        .action-btn.btn-edit-glow { 
-            background: var(--accent); 
-            color: #000; 
+        /* ANIMÁCIA PRE EDIT TLAČIDLO */
+        .action-btn.is-active-edit { 
+            background: var(--accent) !important; 
+            color: #000 !important; 
             border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+            box-shadow: 0 0 12px var(--accent);
+            animation: pulse-edit 1.5s infinite;
+        }
+
+        @keyframes pulse-edit {
+            0% { box-shadow: 0 0 5px var(--accent); }
+            50% { box-shadow: 0 0 18px var(--accent); }
+            100% { box-shadow: 0 0 5px var(--accent); }
         }
     </style>
 </head>
@@ -360,6 +364,7 @@
             if(query && !i.name.toLowerCase().includes(query)) return;
             
             const isCP = i.status === 'cp';
+            const isEditing = editingId === i.id;
             const sell = Number(i.sell) || 0;
             const cost = Number(i.cost) || 0;
             const profit = sell - cost;
@@ -382,23 +387,16 @@
                 }
             }
 
-            const weightVal = (Number(i.totalW)||0).toFixed(0);
-            const hoursVal = Math.floor((Number(i.mins)||0)/60);
-            const minsVal = (Number(i.mins)||0)%60;
-            
-            const detailsLine = i.type === 'print' ? `${weightVal}g | ${hoursVal}h ${minsVal}m •` : "Extra •";
-            
+            const details = i.type === 'print' ? `${(Number(i.totalW)||0).toFixed(0)}g | ${Math.floor((Number(i.mins)||0)/60)}h ${(Number(i.mins)||0)%60}m` : "Nákup / Výdavok";
             const costPer = (cost / count).toFixed(2);
             const sellPer = (sell / count).toFixed(2);
 
             container.innerHTML += `
-                <div class="job-card type-${i.type} ${editingId === i.id ? 'is-editing' : ''} ${isCP ? 'is-cp' : ''}">
+                <div class="job-card type-${i.type} ${isEditing ? 'is-editing' : ''} ${isCP ? 'is-cp' : ''}">
                     <div class="job-info">
                         <span class="job-name">${i.name} <span class="job-tag ${isCP?'tag-cp':'tag-ok'}">${isCP?'CP':'OK'}</span></span>
-                        <div class="job-meta">
-                            <div class="meta-line-1">${detailsLine}</div>
-                            <div class="meta-line-2">${i.date}</div>
-                        </div>
+                        <div style="font-size:0.75em; color:#aaa; font-weight:bold;">${details}</div>
+                        <div style="font-size:0.70em; color:#666; margin-top:2px;">${i.date}</div>
                     </div>
                     
                     <div class="job-data">
@@ -415,14 +413,14 @@
                     </div>
 
                     <div class="job-profit" style="color:${profit>=0?'var(--success)':'var(--danger)'}">
-                        <span style="font-size:0.4em; display:block; color:#555; text-transform:uppercase; margin-bottom:-5px;">Zisk</span>
+                        <span class="profit-label">Zisk</span>
                         ${profit.toFixed(2)}€
                     </div>
 
                     <div class="actions">
                         <button class="action-btn ${isCP?'':'active-status'}" title="Prepnúť" onclick="toggleItemStatus(${i.id})">${isCP?'CP':'OK'}</button>
                         <button class="action-btn" onclick="duplicateItem(${i.id})">❐</button>
-                        ${i.type==='print'?`<button class="action-btn btn-edit-glow" onclick="editItem(${i.id})">✎</button>`:''}
+                        ${i.type==='print'?`<button class="action-btn ${isEditing ? 'is-active-edit' : ''}" onclick="editItem(${i.id})">✎</button>`:''}
                         <button class="action-btn" onclick="deleteItem(${i.id})">🗑</button>
                     </div>
                 </div>`;
