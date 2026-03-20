@@ -55,7 +55,9 @@
 
         .search-input { width: 100%; background: #111; border: 2px solid var(--primary); color: white; padding: 12px; border-radius: 10px; font-weight: bold; box-sizing: border-box; margin-bottom: 15px; }
 
-        .job-card { background: #1a1a1a; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #333; display: flex; align-items: center; gap: 15px; justify-content: space-between; flex-wrap: wrap; }
+        /* UPRAVENÉ: Štýly pre karty a aktívny edit */
+        .job-card { background: #1a1a1a; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #333; display: flex; align-items: center; gap: 15px; justify-content: space-between; flex-wrap: wrap; transition: all 0.3s ease; }
+        .job-card.is-editing { border: 2px solid var(--accent); background: #252000; box-shadow: 0 0 15px rgba(255, 204, 0, 0.2); }
         .type-buy { border-left: 5px solid var(--danger); }
         .type-print { border-left: 5px solid var(--primary); }
         
@@ -72,6 +74,7 @@
         
         .actions { display: flex; gap: 5px; }
         .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; }
+        .action-btn.active-edit { background: var(--accent); color: #000; border-color: var(--accent); }
     </style>
 </head>
 <body>
@@ -117,8 +120,8 @@
             </div>
             
             <button class="btn-add" id="btn_save" onclick="saveItem()">ULOŽIŤ DO HISTÓRIE</button>
-            <button id="btn_cancel" onclick="clearForm()" style="display:none; background:none; border:none; color:#777; width:100%; margin-top:10px; cursor:pointer;">Zrušiť úpravu</button>
-            <button class="btn-buy" onclick="addOtherItem()">✚ NÁKUP / INÉ VÝDAVKY</button>
+            <button id="btn_cancel" onclick="clearForm()" style="display:none; background:#333; border:1px solid #444; color:#fff; padding:10px; border-radius:10px; width:100%; margin-top:10px; cursor:pointer; font-weight:bold;">✖ ZRUŠIŤ (SPÄŤ NA NOVÚ TLAČ)</button>
+            <button class="btn-buy" id="btn_other" onclick="addOtherItem()">✚ NÁKUP / INÉ VÝDAVKY</button>
             
             <div class="cloud-zone">
                 <button class="btn-cloud btn-backup" id="btn_backup" onclick="handleCloud('backup')">☁️ ZÁLOHOVAŤ</button>
@@ -214,7 +217,7 @@
             totalW: Number(c.totalW),
             mins: Number(c.totalMins),
             weight: Number(c.w), h: Number(c.h), m: Number(c.m), 
-            pricePer: Number(c.p), // <--- SEM SA UKLADÁ CENA ZA KUS
+            pricePer: Number(c.p),
             count: parseInt(document.getElementById('in_count').value) || 1,
             date: new Date().toLocaleString('sk-SK')
         };
@@ -228,7 +231,14 @@
         clearForm(); refreshUI();
     }
 
+    /* UPRAVENÉ: Lepšia funkcia editItem s prepínaním (toggle) */
     function editItem(id) {
+        // Ak už toto ID editujeme, tak kliknutie na ceruzku editáciu zruší
+        if (editingId === id) {
+            clearForm();
+            return;
+        }
+
         const i = items.find(x => x.id === id); 
         if(!i || i.type !== 'print') return;
         
@@ -239,19 +249,20 @@
         document.getElementById('in_h').value = i.h || 0;
         document.getElementById('in_m').value = i.m || 0;
         
-        // OPRAVA: Ak pricePer neexistuje, vypočíta ho z celkového predaja
         const pricePerFix = i.pricePer || (i.sell / (i.count || 1));
         document.getElementById('in_price_per').value = pricePerFix.toFixed(2);
-        
         document.getElementById('view_total_cost').value = i.cost.toFixed(2);
         
         document.getElementById('form_title').innerText = "✎ UPRAVIŤ TLAČ";
+        document.getElementById('form_title').style.color = "var(--accent)";
         document.getElementById('btn_save').innerText = "ULOŽIŤ ZMENY";
         document.getElementById('btn_save').classList.add('btn-edit-mode');
         document.getElementById('btn_cancel').style.display = "block";
+        document.getElementById('btn_other').style.display = "none";
         
         window.scrollTo({top: 0, behavior: 'smooth'});
         updatePreview(false);
+        refreshUI(); // Re-render pre zvýraznenie v zozname
     }
 
     function duplicateItem(id) {
@@ -261,6 +272,7 @@
         refreshUI();
     }
 
+    /* UPRAVENÉ: clearForm teraz resetuje úplne všetko */
     function clearForm() {
         editingId = null;
         document.getElementById('in_name').value = '';
@@ -269,11 +281,16 @@
         document.getElementById('in_m').value = '';
         document.getElementById('in_price_per').value = '';
         document.getElementById('in_count').value = '1';
+        
         document.getElementById('form_title').innerText = "✚ NOVÁ TLAČ";
+        document.getElementById('form_title').style.color = "var(--primary)";
         document.getElementById('btn_save').innerText = "ULOŽIŤ DO HISTÓRIE";
         document.getElementById('btn_save').classList.remove('btn-edit-mode');
         document.getElementById('btn_cancel').style.display = "none";
+        document.getElementById('btn_other').style.display = "block";
+        
         updatePreview(true);
+        refreshUI();
     }
 
     function addOtherItem() {
@@ -283,7 +300,7 @@
         refreshUI();
     }
 
-    function deleteItem(id) { if(confirm("Zmazať?")) { items = items.filter(i => i.id !== id); refreshUI(); } }
+    function deleteItem(id) { if(confirm("Zmazať?")) { items = items.filter(i => i.id !== id); if(editingId === id) clearForm(); refreshUI(); } }
 
     function refreshUI() {
         const container = document.getElementById('list_container');
@@ -298,6 +315,9 @@
             const profit = (i.type === 'buy') ? (Number(i.profit) || (sell - cost)) : (sell - cost);
             tObrat += sell; tProfit += profit;
 
+            // Kontrola, či sa táto karta práve edituje
+            const isEditingThis = (editingId === i.id);
+
             let details = "Iné";
             if(i.type === 'print') {
                 const g = Number(i.totalW) || 0; const m = Number(i.mins) || 0;
@@ -309,7 +329,7 @@
             } else if(profit < 0) tOther += Math.abs(profit);
 
             container.innerHTML += `
-                <div class="job-card type-${i.type}">
+                <div class="job-card type-${i.type} ${isEditingThis ? 'is-editing' : ''}">
                     <div class="job-info"><span class="job-name">${i.name}</span><span class="job-date">${i.date}</span></div>
                     <div class="job-data">
                         <div class="data-item"><span class="data-label">Detaily</span><span class="data-val">${details}</span></div>
@@ -319,7 +339,7 @@
                     <div class="job-profit" style="color:${profit>=0?'var(--success)':'var(--danger)'}">${profit.toFixed(2)}€</div>
                     <div class="actions">
                         <button class="action-btn" title="Kópia" onclick="duplicateItem(${i.id})">❐</button>
-                        ${i.type==='print'?`<button class="action-btn" title="Upraviť" onclick="editItem(${i.id})">✎</button>`:''}
+                        ${i.type==='print'?`<button class="action-btn ${isEditingThis ? 'active-edit' : ''}" title="Upraviť" onclick="editItem(${i.id})">✎</button>`:''}
                         <button class="action-btn" title="Zmazať" onclick="deleteItem(${i.id})">🗑</button>
                     </div>
                 </div>`;
