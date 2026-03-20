@@ -28,7 +28,6 @@
 
         label { display: block; font-size: 0.65em; color: #aaa; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
         input { width: 100%; background: #000; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; box-sizing: border-box; font-size: 16px; margin-bottom: 8px; outline: none; }
-        input:focus { border-color: var(--primary); }
         
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
@@ -41,7 +40,7 @@
         .btn-buy { background: transparent; color: var(--success); border: 1px solid var(--success); padding: 8px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; font-weight: bold; }
 
         .cloud-zone { display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; }
-        .btn-cloud { flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; border: none; transition: 0.2s; font-size: 0.8em; }
+        .btn-cloud { flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; font-size: 0.8em; }
         .btn-backup { background: #0044cc; color: white; }
         .btn-restore { background: #333; color: white; border: 1px solid #555; }
 
@@ -56,7 +55,6 @@
 
         .search-input { width: 100%; background: #111; border: 2px solid var(--primary); color: white; padding: 12px; border-radius: 10px; font-weight: bold; box-sizing: border-box; margin-bottom: 15px; }
 
-        /* POLOŽKY V ZOZNAME */
         .job-card { background: #1a1a1a; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #333; display: flex; align-items: center; gap: 15px; justify-content: space-between; flex-wrap: wrap; }
         .type-buy { border-left: 5px solid var(--danger); }
         .type-print { border-left: 5px solid var(--primary); }
@@ -73,8 +71,7 @@
         .job-profit { min-width: 70px; text-align: right; font-weight: 900; font-size: 1.1em; }
         
         .actions { display: flex; gap: 5px; }
-        .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; transition: 0.2s; }
-        .action-btn:hover { border-color: var(--primary); color: white; }
+        .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; }
     </style>
 </head>
 <body>
@@ -211,38 +208,49 @@
             id: editingId || Date.now(),
             type: 'print',
             name: name,
-            sell: c.totalSell,
-            cost: c.cost,
-            profit: c.totalSell - c.cost,
-            totalW: c.totalW,
-            mins: c.totalMins,
-            weight: c.w, h: c.h, m: c.m, pricePer: c.p,
+            sell: Number(c.totalSell),
+            cost: Number(c.cost),
+            profit: Number(c.totalSell - c.cost),
+            totalW: Number(c.totalW),
+            mins: Number(c.totalMins),
+            weight: Number(c.w), h: Number(c.h), m: Number(c.m), 
+            pricePer: Number(c.p), // <--- SEM SA UKLADÁ CENA ZA KUS
             count: parseInt(document.getElementById('in_count').value) || 1,
             date: new Date().toLocaleString('sk-SK')
         };
 
-        if(editingId) items = items.map(i => i.id === editingId ? newItem : i);
-        else items.unshift(newItem);
+        if(editingId) {
+            items = items.map(i => i.id === editingId ? newItem : i);
+        } else {
+            items.unshift(newItem);
+        }
         
         clearForm(); refreshUI();
     }
 
     function editItem(id) {
-        const i = items.find(x => x.id === id); if(!i || i.type !== 'print') return;
+        const i = items.find(x => x.id === id); 
+        if(!i || i.type !== 'print') return;
+        
         editingId = id;
         document.getElementById('in_name').value = i.name;
-        document.getElementById('in_w').value = i.weight;
-        document.getElementById('in_count').value = i.count;
-        document.getElementById('in_h').value = i.h;
-        document.getElementById('in_m').value = i.m;
-        document.getElementById('in_price_per').value = i.pricePer;
+        document.getElementById('in_w').value = i.weight || 0;
+        document.getElementById('in_count').value = i.count || 1;
+        document.getElementById('in_h').value = i.h || 0;
+        document.getElementById('in_m').value = i.m || 0;
+        
+        // OPRAVA: Ak pricePer neexistuje, vypočíta ho z celkového predaja
+        const pricePerFix = i.pricePer || (i.sell / (i.count || 1));
+        document.getElementById('in_price_per').value = pricePerFix.toFixed(2);
+        
         document.getElementById('view_total_cost').value = i.cost.toFixed(2);
         
         document.getElementById('form_title').innerText = "✎ UPRAVIŤ TLAČ";
         document.getElementById('btn_save').innerText = "ULOŽIŤ ZMENY";
         document.getElementById('btn_save').classList.add('btn-edit-mode');
         document.getElementById('btn_cancel').style.display = "block";
-        window.scrollTo(0,0);
+        
+        window.scrollTo({top: 0, behavior: 'smooth'});
         updatePreview(false);
     }
 
