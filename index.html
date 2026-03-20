@@ -11,35 +11,74 @@
             --border: #333;
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); padding: 10px; margin: 0; }
+        
+        /* HLAVIČKA */
         .header { width: 100%; max-width: 1200px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin: 0 auto 15px auto; gap: 10px; }
         .header-center { flex-grow: 1; text-align: center; }
         #live-clock { font-size: 1.8em; font-weight: 900; color: #fff; margin-bottom: 2px; }
         #live-date { font-size: 0.85em; color: var(--primary); text-transform: uppercase; font-weight: bold; }
+        
         .config-bar { background: #001a33; padding: 10px; border-radius: 10px; display: flex; gap: 12px; border: 1px solid var(--primary); }
         .config-input { background: #000; border: 1px solid var(--primary); color: var(--primary); font-weight: bold; text-align: center; border-radius: 4px; padding: 3px; width: 60px; }
+
         .main-layout { width: 100%; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 768px) { .main-layout { grid-template-columns: 340px 1fr; } }
+
+        /* PANELY */
         .panel { background: var(--card); border-radius: 16px; padding: 20px; border: 1px solid var(--border); }
         .sticky { position: sticky; top: 15px; }
+
         label { display: block; font-size: 0.65em; color: #aaa; text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
         input { width: 100%; background: #000; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; box-sizing: border-box; font-size: 16px; margin-bottom: 8px; outline: none; }
+        input:focus { border-color: var(--primary); }
+        
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* KALKULAČKA NÁHĽAD */
         .calc-preview { background: #1a1500; padding: 12px; border-radius: 10px; margin: 10px 0; border: 1px solid var(--accent); color: var(--accent); }
         .line { display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin-bottom: 5px; }
-        .input-inline { background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 4px 8px; border-radius: 4px; width: 85px; text-align: right; font-weight: bold; }
-        .btn-add { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .btn-buy { background: transparent; color: var(--success); border: 1px solid var(--success); padding: 8px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; }
+        .input-inline { background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 4px 8px; border-radius: 4px; width: 85px; text-align: right; font-weight: bold; border: 1px solid var(--accent); }
+
+        .btn-add { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 5px; }
+        .btn-buy { background: transparent; color: var(--success); border: 1px solid var(--success); padding: 8px; width: 100%; border-radius: 10px; margin-top: 10px; cursor: pointer; font-weight: bold; }
+
+        /* CLOUD TLAČIDLÁ */
+        .cloud-zone { display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; }
+        .btn-cloud { flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; border: none; transition: 0.2s; font-size: 0.8em; }
+        .btn-backup { background: #0044cc; color: white; }
+        .btn-restore { background: #333; color: white; border: 1px solid #555; }
+        .btn-cloud:active { transform: scale(0.95); }
+
+        /* SUMÁR */
         .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         @media (min-width: 900px) { .summary-grid { grid-template-columns: repeat(4, 1fr); } }
+        
         .stat-card { background: #111; padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        .stat-label { font-size: 0.6em; color: #888; text-transform: uppercase; }
+        .stat-label { font-size: 0.6em; color: #888; text-transform: uppercase; margin-bottom: 3px; }
         .stat-value { font-size: 1.1em; font-weight: 900; }
         .card-spent { color: var(--danger); border-bottom: 2px solid var(--danger); }
-        .card-profit { border: 2px solid var(--success); color: var(--success); }
-        .job-card { background: #1a1a1a; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .job-info { flex: 1; min-width: 150px; }
-        .job-data { display: flex; gap: 15px; text-align: center; font-size: 0.85em; }
-        .action-btn { background: #222; border: 1px solid #444; color: #aaa; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px; }
+        .card-profit { border: 2px solid var(--success); color: var(--success); background: #001a0d; }
+
+        /* VYHĽADÁVANIE */
+        .search-box { position: relative; margin-bottom: 15px; }
+        .search-input { width: 100%; background: #111; border: 2px solid var(--primary); color: white; padding: 12px 15px; border-radius: 10px; font-weight: bold; box-sizing: border-box; }
+
+        /* ZOZNAM POLOŽIEK */
+        .job-card { background: #1a1a1a; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #333; display: flex; align-items: center; gap: 15px; justify-content: space-between; }
+        .type-buy { border-left: 5px solid var(--danger); }
+        .type-print { border-left: 5px solid var(--primary); }
+        
+        .job-info { flex-grow: 1; }
+        .job-name { font-weight: bold; display: block; margin-bottom: 2px; }
+        .job-date { font-size: 0.75em; color: #666; }
+
+        .job-data { display: flex; gap: 12px; text-align: center; }
+        .data-item { display: flex; flex-direction: column; min-width: 50px; }
+        .data-label { font-size: 0.55em; color: #555; text-transform: uppercase; }
+        .data-val { font-size: 0.85em; font-weight: bold; }
+
+        .job-profit { min-width: 70px; text-align: right; font-weight: 900; }
+        .action-btn { background: #222; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 8px; border-radius: 6px; }
     </style>
 </head>
 <body>
@@ -51,36 +90,46 @@
         <div id="live-date">--.--.----</div>
     </div>
     <div class="config-bar">
-        <div><label>€/KG</label><input type="number" id="cfg_fil" value="19" class="config-input"></div>
-        <div><label>€/KWH</label><input type="number" id="cfg_ele" value="0.19" class="config-input"></div>
+        <div><label>€/KG</label><input type="number" id="cfg_fil" value="19" class="config-input" step="any"></div>
+        <div><label>€/KWH</label><input type="number" id="cfg_ele" value="0.19" class="config-input" step="any"></div>
     </div>
 </div>
 
 <div class="main-layout">
-    <div class="panel sticky">
-        <h2 id="form_title" style="color:var(--primary); font-size: 1.1em;">✚ NOVÁ TLAČ</h2>
-        <label>Názov Projektu</label>
-        <input type="text" id="in_name" placeholder="Názov...">
-        <div class="row">
-            <div><label>Váha/ks (g)</label><input type="number" id="in_w"></div>
-            <div><label>Počet ks</label><input type="number" id="in_count" value="1"></div>
-        </div>
-        <div class="row">
-            <div><label>Hodiny</label><input type="number" id="in_h"></div>
-            <div><label>Minúty</label><input type="number" id="in_m"></div>
-        </div>
-        <label>Predajná cena / ks (€)</label>
-        <input type="number" id="in_price_per">
-        <div class="calc-preview">
-            <div class="line"><span>MATERIÁL:</span> <span id="view_total_w">0 g</span></div>
-            <div class="line"><span>NÁKLAD (€):</span> <input type="number" id="view_total_cost" class="input-inline" step="any" value="0.00" oninput="updatePreview(false)"></div>
-            <div class="line" style="border-top: 1px solid #444; padding-top: 5px;"><span>ZISK:</span> <span id="view_total_profit">0.00 €</span></div>
-        </div>
-        <button class="btn-add" id="btn_save" onclick="saveItem()">ULOŽIŤ DO HISTÓRIE</button>
-        <button class="btn-buy" onclick="addOtherItem()">✚ NÁKUP / INÉ</button>
-        <div class="cloud-zone">
-            <button class="btn-cloud" onclick="handleCloud('backup')">☁️ Zálohovať</button>
-            <button class="btn-cloud" onclick="handleCloud('restore')">⬇️ Obnoviť</button>
+    <div class="side-panels">
+        <div class="panel sticky">
+            <h2 id="form_title" style="color:var(--primary); font-size: 1.1em; margin-bottom: 15px;">✚ NOVÁ TLAČ</h2>
+            <label>Názov Projektu</label>
+            <input type="text" id="in_name" placeholder="Napr. Držiak slúchadiel...">
+            <div class="row">
+                <div><label>Váha/ks (g)</label><input type="number" id="in_w" step="any"></div>
+                <div><label>Počet ks</label><input type="number" id="in_count" value="1"></div>
+            </div>
+            <div class="row">
+                <div><label>Hodiny</label><input type="number" id="in_h"></div>
+                <div><label>Minúty</label><input type="number" id="in_m"></div>
+            </div>
+            <label>Predajná cena / 1 ks (€)</label>
+            <input type="number" id="in_price_per" step="any">
+            
+            <div class="calc-preview">
+                <div class="line"><span>MATERIÁL:</span> <span id="view_total_w">0 g</span></div>
+                <div class="line">
+                    <span>NÁKLAD (€):</span> 
+                    <input type="number" id="view_total_cost" class="input-inline" step="any" value="0.00" oninput="updatePreview(false)">
+                </div>
+                <div class="line" style="border-top: 1px solid #444; padding-top: 5px; font-size: 1.1em;">
+                    <span>ZISK:</span> <span id="view_total_profit">0.00 €</span>
+                </div>
+            </div>
+            
+            <button class="btn-add" id="btn_save" onclick="saveItem()">ULOŽIŤ DO HISTÓRIE</button>
+            <button class="btn-buy" onclick="addOtherItem()">✚ NÁKUP / INÉ VÝDAVKY</button>
+            
+            <div class="cloud-zone">
+                <button class="btn-cloud btn-backup" id="btn_backup" onclick="handleCloud('backup')"><span>☁️</span> ZÁLOHOVAŤ</button>
+                <button class="btn-cloud btn-restore" id="btn_restore" onclick="handleCloud('restore')"><span>⬇️</span> OBNOVIŤ</button>
+            </div>
         </div>
     </div>
 
@@ -93,8 +142,13 @@
             <div class="stat-card card-spent"><div class="stat-label">Materiál</div><div class="stat-value" id="total_mat_cost">0.00 €</div></div>
             <div class="stat-card card-spent"><div class="stat-label">Elektrina</div><div class="stat-value" id="total_ele_cost">0.00 €</div></div>
             <div class="stat-card card-spent"><div class="stat-label">Iné Extra</div><div class="stat-value" id="total_spent_other">0.00 €</div></div>
-            <div class="stat-card card-profit"><div class="stat-label">Zisk</div><div class="stat-value" id="stat_profit">0.00 €</div></div>
+            <div class="stat-card card-profit"><div class="stat-label" style="color:var(--success)">Čistý Zisk</div><div class="stat-value" id="stat_profit">0.00 €</div></div>
         </div>
+
+        <div class="search-box">
+            <input type="text" id="search_input" class="search-input" placeholder="🔍 Vyhľadať v histórii..." oninput="refreshUI()">
+        </div>
+
         <div id="list_container"></div>
     </div>
 </div>
@@ -102,9 +156,12 @@
 <script>
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbx-NoHXuzfx7EVN1ZeY2W4nUmj6RS1JKZylLEabzdFueGmgpAiBPWgOZiNxfHxRjaHN/exec";
     const MOJE_HESLO = "9988"; 
+    const WATT_USAGE = 0.12; 
+
     let items = [];
     let editingId = null;
 
+    // Hodiny
     function updateClock() {
         const now = new Date();
         document.getElementById('live-clock').innerText = now.toLocaleTimeString('sk-SK');
@@ -112,6 +169,7 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
+    // Dynamický výpočet pri písaní
     function updatePreview(auto = true) {
         const w = parseFloat(document.getElementById('in_w').value) || 0;
         const c = parseInt(document.getElementById('in_count').value) || 1;
@@ -124,92 +182,163 @@
         const totalW = w * c;
         const totalMins = (h * 60 + m) * c;
         const matC = (totalW / 1000) * f;
-        const eleC = (totalMins / 60) * 0.12 * e;
+        const eleC = (totalMins / 60) * WATT_USAGE * e;
 
-        if(auto) document.getElementById('view_total_cost').value = (matC + eleC).toFixed(2);
-        const cost = parseFloat(document.getElementById('view_total_cost').value) || 0;
+        if(auto) {
+            document.getElementById('view_total_cost').value = (matC + eleC).toFixed(2);
+        }
         
+        const cost = parseFloat(document.getElementById('view_total_cost').value) || 0;
+        const profit = (p * c) - cost;
+
         document.getElementById('view_total_w').innerText = totalW.toFixed(0) + " g";
-        document.getElementById('view_total_profit').innerText = (p * c - cost).toFixed(2) + " €";
+        document.getElementById('view_total_profit').innerText = profit.toFixed(2) + " €";
+        
+        return { totalW, totalMins, cost, profit, totalSell: (p * c) };
     }
 
     ['in_w', 'in_count', 'in_h', 'in_m', 'in_price_per', 'cfg_fil', 'cfg_ele'].forEach(id => {
         document.getElementById(id).addEventListener('input', () => updatePreview(true));
     });
 
+    // Cloud funkcie
     async function handleCloud(action) {
-        if(prompt("Heslo:") !== MOJE_HESLO) return;
+        const heslo = prompt("Zadaj heslo pre cloud:");
+        if(heslo !== MOJE_HESLO) return alert("Nesprávne heslo!");
+        
+        const btn = document.getElementById(action === 'backup' ? 'btn_backup' : 'btn_restore');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "⏳ ČAKAJ...";
+
         try {
             if(action === 'backup') {
                 await fetch(CLOUD_URL, {method:'POST', mode:'no-cors', body: JSON.stringify(items)});
-                alert("Zálohované!");
+                alert("✅ Úspešne zálohované!");
             } else {
                 const res = await fetch(CLOUD_URL);
                 const data = await res.json();
                 items = Array.isArray(data) ? data : [];
                 refreshUI();
+                alert("✅ Dáta obnovené!");
             }
-        } catch(e) { alert("Chyba cloudu!"); }
+        } catch(e) { 
+            alert("❌ Chyba pripojenia na cloud!"); 
+        } finally {
+            btn.innerHTML = originalText;
+        }
     }
 
     function saveItem() {
-        const name = document.getElementById('in_name').value || "Bez názvu";
-        updatePreview(false);
+        const name = document.getElementById('in_name').value.trim() || "Bez názvu";
+        const c = updatePreview(false);
+        
         const newItem = {
-            id: editingId || Date.now(),
+            id: Date.now(),
             type: 'print',
             name: name,
-            sell: (parseFloat(document.getElementById('in_price_per').value) || 0) * (parseInt(document.getElementById('in_count').value) || 1),
-            cost: parseFloat(document.getElementById('view_total_cost').value) || 0,
-            weight: parseFloat(document.getElementById('in_w').value) || 0,
-            totalW: (parseFloat(document.getElementById('in_w').value) || 0) * (parseInt(document.getElementById('in_count').value) || 1),
-            mins: ((parseFloat(document.getElementById('in_h').value) || 0) * 60 + (parseFloat(document.getElementById('in_m').value) || 0)) * (parseInt(document.getElementById('in_count').value) || 1),
+            sell: Number(c.totalSell),
+            cost: Number(c.cost),
+            profit: Number(c.profit),
+            totalW: Number(c.totalW),
+            mins: Number(c.totalMins),
             count: parseInt(document.getElementById('in_count').value) || 1,
-            date: new Date().toLocaleString('sk-SK')
+            date: new Date().toLocaleString('sk-SK', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})
         };
+
         items.unshift(newItem);
+        clearForm();
         refreshUI();
     }
 
     function addOtherItem() {
-        const n = prompt("Názov:"); if(!n) return;
-        const v = parseFloat(prompt("Suma (mínus pre náklad):").replace(',','.'));
-        items.unshift({id:Date.now(), type:'buy', name:n, sell: v>0?v:0, cost: v<0?Math.abs(v):0, profit:v, date: new Date().toLocaleString('sk-SK')});
+        const n = prompt("Názov položky:"); if(!n) return;
+        const vStr = prompt("Suma v € (mínus pre výdavok, napr -20):");
+        const v = parseFloat(vStr ? vStr.replace(',','.') : 0);
+        
+        items.unshift({
+            id: Date.now(), 
+            type: 'buy', 
+            name: n, 
+            sell: v > 0 ? v : 0, 
+            cost: v < 0 ? Math.abs(v) : 0, 
+            profit: v, 
+            date: new Date().toLocaleString('sk-SK', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'})
+        });
         refreshUI();
     }
 
-    function deleteItem(id) { if(confirm("Zmazať?")) { items = items.filter(i => i.id !== id); refreshUI(); } }
+    function deleteItem(id) {
+        if(confirm("Naozaj vymazať?")) {
+            items = items.filter(i => i.id !== id);
+            refreshUI();
+        }
+    }
+
+    function clearForm() {
+        document.getElementById('in_name').value = '';
+        document.getElementById('in_w').value = '';
+        document.getElementById('in_h').value = '';
+        document.getElementById('in_m').value = '';
+        document.getElementById('in_price_per').value = '';
+        document.getElementById('in_count').value = '1';
+        updatePreview(true);
+    }
 
     function refreshUI() {
         const container = document.getElementById('list_container');
+        const query = document.getElementById('search_input').value.toLowerCase();
         container.innerHTML = '';
+
         let tObrat = 0, tProfit = 0, tKg = 0, tMins = 0, tMat = 0, tEle = 0, tOther = 0;
 
         items.forEach(i => {
+            // Filtrovanie
+            if(query && !i.name.toLowerCase().includes(query)) return;
+
             const sell = Number(i.sell) || 0;
             const cost = Number(i.cost) || 0;
-            const profit = (i.type === 'buy') ? (Number(i.profit) || (sell - cost)) : (sell - cost);
+            const profit = Number(i.profit) || (sell - cost);
             
-            tObrat += sell; tProfit += profit;
-            if(i.type === 'print') {
-                tKg += (Number(i.totalW) || 0);
-                tMins += (Number(i.mins) || 0);
-                const mC = ((Number(i.totalW) || 0) / 1000) * 19;
-                const eC = ((Number(i.mins) || 0) / 60) * 0.12 * 0.19;
-                tMat += mC; tEle += eC;
-                if(cost > (mC + eC)) tOther += (cost - (mC + eC));
-            } else { if(profit < 0) tOther += Math.abs(profit); }
+            tObrat += sell;
+            tProfit += profit;
 
-            container.innerHTML += `<div class="job-card">
-                <div class="job-info"><b>${i.name}</b><br><small>${i.date}</small></div>
-                <div class="job-data">
-                    <div>${cost.toFixed(2)}€<br><small>NÁKLAD</small></div>
-                    <div style="color:var(--success)">${profit.toFixed(2)}€<br><small>ZISK</small></div>
+            if(i.type === 'print') {
+                const grams = Number(i.totalW) || 0;
+                const minutes = Number(i.mins) || 0;
+                tKg += grams;
+                tMins += minutes;
+
+                const mCost = (grams / 1000) * 19;
+                const eCost = (minutes / 60) * 0.12 * 0.19;
+                tMat += mCost;
+                tEle += eCost;
+                
+                const extra = cost - (mCost + eCost);
+                if(extra > 0.01) tOther += extra;
+            } else {
+                if(profit < 0) tOther += Math.abs(profit);
+            }
+
+            const card = document.createElement('div');
+            card.className = `job-card type-${i.type}`;
+            card.innerHTML = `
+                <div class="job-info">
+                    <span class="job-name">${i.name}</span>
+                    <span class="job-date">${i.date}</span>
                 </div>
-                <div><button class="action-btn" onclick="deleteItem(${i.id})">🗑</button></div>
-            </div>`;
+                <div class="job-data">
+                    <div class="data-item"><span class="data-label">Náklad</span><span class="data-val" style="color:var(--danger)">${cost.toFixed(2)}€</span></div>
+                    <div class="data-item"><span class="data-label">Predaj</span><span class="data-val" style="color:var(--primary)">${sell > 0 ? sell.toFixed(2)+'€' : '-'}</span></div>
+                </div>
+                <div class="job-profit" style="color:${profit >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                    ${profit.toFixed(2)}€
+                </div>
+                <button class="action-btn" onclick="deleteItem(${i.id})">🗑</button>
+            `;
+            container.appendChild(card);
         });
 
+        // Aktualizácia štatistík
         document.getElementById('stat_count').innerText = items.length;
         document.getElementById('stat_obrat').innerText = tObrat.toFixed(2) + " €";
         document.getElementById('stat_profit').innerText = tProfit.toFixed(2) + " €";
